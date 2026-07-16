@@ -23,7 +23,8 @@ import {
   ArrowRight,
   X,
   Grid,
-  List
+  List,
+  ChevronDown
 } from 'lucide-react';
 import { Playbook, ChecklistItem } from './types';
 import { initialPlaybooks } from './mockData';
@@ -92,12 +93,13 @@ const rubrics: RubricItem[] = [
 
 export default function App() {
   // Navigation State
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'playbook' | 'timeline' | 'copilot'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'playbook' | 'timeline' | 'copilot' | 'rubrics'>('dashboard');
   const [currentPlaybookId, setCurrentPlaybookId] = useState<string | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activeAvatarUrl, setActiveAvatarUrl] = useState<{ url: string, name: string } | null>(null);
   const [viewMode, setViewMode] = useState<'detailed' | 'compact'>('detailed');
+  const [openRubric, setOpenRubric] = useState<number | null>(null);
 
   // Playbooks State (Merged with new initial playbooks to support updates)
   const [playbooks, setPlaybooks] = useState<Playbook[]>(() => {
@@ -228,7 +230,7 @@ export default function App() {
       }
       setActiveActivity(current);
 
-      const nextCP = timelineEvents.find(e => e.isCheckpoint && e.start > now);
+      const nextCP = timelineEvents.find(e => (e.isCheckpoint || e.isTeamDeadline) && e.start > now);
       setNextCheckpoint(nextCP || null);
     };
 
@@ -495,7 +497,13 @@ export default function App() {
               onClick={() => { setActiveTab('copilot'); setCurrentPlaybookId(null); setIsAddingNew(false); setIsEditing(false); }}
               className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${activeTab === 'copilot' ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              🧠 AI Copilot
+              AI Copilot
+            </button>
+            <button 
+              onClick={() => { setActiveTab('rubrics'); setCurrentPlaybookId(null); setIsAddingNew(false); setIsEditing(false); }}
+              className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${activeTab === 'rubrics' ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Rubrics
             </button>
           </nav>
 
@@ -588,15 +596,15 @@ export default function App() {
 
               {/* Card 2: Next Checkpoint */}
               <div className="bg-white border border-border rounded-xl shadow-sm p-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-bl-lg">
-                  Cột mốc quan trọng
+                <div className={`absolute top-0 right-0 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-bl-lg ${nextCheckpoint?.isTeamDeadline ? 'bg-blue-500' : 'bg-amber-500'}`}>
+                  {nextCheckpoint?.isTeamDeadline ? 'Deadline đội' : 'Cột mốc quan trọng'}
                 </div>
                 <div className="flex items-start space-x-4">
-                  <div className="bg-amber-50 p-3 rounded-lg text-amber-600 mt-1">
+                  <div className={`p-3 rounded-lg mt-1 ${nextCheckpoint?.isTeamDeadline ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'}`}>
                     <Flag className="w-6 h-6" />
                   </div>
                   <div className="flex-1 space-y-2">
-                    <span className="text-[10px] font-extrabold uppercase text-amber-600 tracking-wider">01 Checkpoint Sắp Tới</span>
+                    <span className={`text-[10px] font-extrabold uppercase tracking-wider ${nextCheckpoint?.isTeamDeadline ? 'text-blue-600' : 'text-amber-600'}`}>01 Checkpoint Sắp Tới</span>
                     {nextCheckpoint ? (
                       <>
                         <h2 className="text-lg font-bold text-foreground leading-tight">
@@ -606,9 +614,9 @@ export default function App() {
                           Hạn nộp: Ngày {nextCheckpoint.displayDate} lúc {nextCheckpoint.displayTime}
                         </p>
                         {nextCheckpoint.deliverables && (
-                          <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100 mt-2">
-                            <span className="block text-[10px] font-extrabold uppercase text-amber-600 tracking-wider mb-1">Tài liệu cần nộp:</span>
-                            <span className="text-xs text-amber-900 font-semibold leading-relaxed">{nextCheckpoint.deliverables}</span>
+                          <div className={`p-3 rounded-lg border mt-2 ${nextCheckpoint.isTeamDeadline ? 'bg-blue-50/50 border-blue-100' : 'bg-amber-50/50 border-amber-100'}`}>
+                            <span className={`block text-[10px] font-extrabold uppercase tracking-wider mb-1 ${nextCheckpoint.isTeamDeadline ? 'text-blue-600' : 'text-amber-600'}`}>{nextCheckpoint.isTeamDeadline ? 'Đội cần chuẩn bị:' : 'Tài liệu cần nộp:'}</span>
+                            <span className={`text-xs font-semibold leading-relaxed ${nextCheckpoint.isTeamDeadline ? 'text-blue-900' : 'text-amber-900'}`}>{nextCheckpoint.deliverables}</span>
                           </div>
                         )}
                       </>
@@ -765,10 +773,6 @@ export default function App() {
                             ))}
                           </div>
 
-                          {/* 5. Cares About snippet */}
-                          <p className="text-[11px] text-muted-foreground font-medium mt-4 line-clamp-2 px-2">
-                            🎯 {pb.cheatSheet.likelyCaresAbout || pb.mostCaresAbout.slice(0, 2).join(', ')}
-                          </p>
                         </div>
 
                         {/* 6. View Profile Button */}
@@ -834,10 +838,7 @@ export default function App() {
                           <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">🧠 Chuyên môn</div>
                           <p className="text-xs text-foreground font-medium">{pb.cheatSheet.expertise || pb.expertise.join(' · ')}</p>
                         </div>
-                        <div>
-                          <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">🎯 Quan tâm hàng đầu</div>
-                          <p className="text-xs text-foreground font-medium">{pb.cheatSheet.likelyCaresAbout || pb.mostCaresAbout.slice(0, 3).join(', ')}</p>
-                        </div>
+
                         {pb.cheatSheet.avoid && (
                           <div>
                             <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">🚫 Tránh nhắc/làm</div>
@@ -1745,6 +1746,167 @@ export default function App() {
               </button>
             </div>
           </form>
+        )}
+        {/* 5. Rubrics View */}
+        {activeTab === 'rubrics' && !currentPlaybookId && !isAddingNew && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Header */}
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-foreground">Scoring Rubrics</h2>
+              <p className="text-sm text-muted-foreground mt-1">VAIC 2026 Official Evaluation — 100 points total. Click each criterion to expand details.</p>
+            </div>
+
+            {/* Score overview bar */}
+            <div className="bg-secondary border border-border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Score Distribution</span>
+                <span className="text-xs font-bold text-foreground">100 pts</span>
+              </div>
+              <div className="flex h-2 rounded-full overflow-hidden gap-px bg-border">
+                <div className="bg-primary" style={{width: '20%'}} title="Technical 20pts" />
+                <div className="bg-primary/80" style={{width: '20%'}} title="AI Architecture 20pts" />
+                <div className="bg-primary/60" style={{width: '20%'}} title="Business 20pts" />
+                <div className="bg-primary/45" style={{width: '15%'}} title="UX 15pts" />
+                <div className="bg-primary/30" style={{width: '15%'}} title="AI Safety 15pts" />
+                <div className="bg-primary/20" style={{width: '10%'}} title="Presentation 10pts" />
+              </div>
+              <div className="flex text-[10px] text-muted-foreground mt-2 font-medium gap-3 flex-wrap">
+                {[
+                  ['Technical', '20'],
+                  ['AI Architecture', '20'],
+                  ['Business', '20'],
+                  ['UX', '15'],
+                  ['AI Safety', '15'],
+                  ['Presentation', '10']
+                ].map(([label, pts]) => (
+                  <span key={label}><span className="font-bold text-foreground">{pts}</span> {label}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Accordion list */}
+            <div className="border border-border rounded-lg overflow-hidden divide-y divide-border">
+              {[
+                {
+                  num: 1,
+                  title: 'Technical Implementation & Engineering Depth',
+                  pts: 20,
+                  criteria: [
+                    'Kiến trúc kỹ thuật rõ ràng, có chiều sâu',
+                    'Demo chạy thật (không fake/hardcode)',
+                    'Code, API, deployment hoạt động ổn định'
+                  ],
+                  keywords: ['Engineering', 'Production Readiness']
+                },
+                {
+                  num: 2,
+                  title: 'AI-Native Architecture & Innovation',
+                  pts: 20,
+                  criteria: [
+                    'AI là trung tâm của sản phẩm, không chỉ "gắn thêm chatbot"',
+                    'Agent workflow / reasoning / context management hợp lý',
+                    'Có điểm mới về kiến trúc hoặc cách dùng AI'
+                  ],
+                  keywords: ['Agentic AI', 'AI-Native']
+                },
+                {
+                  num: 3,
+                  title: 'Business Viability & Pilot Pathway',
+                  pts: 20,
+                  criteria: [
+                    'Giải quyết pain point thật của doanh nghiệp',
+                    'Có lộ trình pilot rõ ràng (ai dùng, dùng khi nào, đo gì)',
+                    'ROI hoặc business impact hợp lý'
+                  ],
+                  keywords: ['Pilot', 'Business Impact']
+                },
+                {
+                  num: 4,
+                  title: 'AI-Native UX & Design Thinking',
+                  pts: 15,
+                  criteria: [
+                    'UX đơn giản, tự nhiên, ít learning curve',
+                    'AI tạo trải nghiệm tốt hơn chứ không chỉ thay giao diện',
+                    'Thiết kế theo user workflow'
+                  ],
+                  keywords: ['AI UX', 'User Workflow']
+                },
+                {
+                  num: 5,
+                  title: 'AI Safety, Grounding & Trust',
+                  pts: 15,
+                  criteria: [
+                    'Câu trả lời có nguồn (grounded)',
+                    'Có cơ chế giảm hallucination / bảo vệ dữ liệu',
+                    'Minh bạch, có logging hoặc explainability'
+                  ],
+                  keywords: ['Grounding', 'Trust']
+                },
+                {
+                  num: 6,
+                  title: 'Presentation, Demo & Defensibility',
+                  pts: 10,
+                  criteria: [
+                    'Demo mượt, storytelling rõ ràng',
+                    'Trả lời phản biện tốt',
+                    'Chứng minh được mọi claim bằng evidence'
+                  ],
+                  keywords: ['Evidence', 'Defensibility']
+                }
+              ].map((rubric) => {
+                const isOpen = openRubric === rubric.num;
+                return (
+                  <div key={rubric.num} className="bg-background">
+                    {/* Toggle row */}
+                    <button
+                      onClick={() => setOpenRubric(isOpen ? null : rubric.num)}
+                      className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-secondary transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-muted-foreground w-5 text-right flex-shrink-0">{rubric.num}.</span>
+                        <span className="text-sm font-semibold text-foreground">{rubric.title}</span>
+                      </div>
+                      <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+                        <span className="text-xs font-bold text-primary">{rubric.pts} pts</span>
+                        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                    </button>
+
+                    {/* Expanded content */}
+                    {isOpen && (
+                      <div className="px-5 pb-5 pt-1 bg-secondary border-t border-border">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          {/* Criteria */}
+                          <div>
+                            <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Tiêu chí chấm điểm</div>
+                            <ul className="space-y-2">
+                              {rubric.criteria.map((c, i) => (
+                                <li key={i} className="flex items-start gap-2 text-sm text-foreground">
+                                  <span className="text-primary font-bold mt-0.5 flex-shrink-0">—</span>
+                                  {c}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          {/* Keywords */}
+                          <div>
+                            <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-2">Keywords cần đào sâu</div>
+                            <div className="flex flex-wrap gap-2">
+                              {rubric.keywords.map((kw, i) => (
+                                <span key={i} className="border border-primary text-primary text-xs font-bold px-3 py-1 rounded-full bg-background">
+                                  {kw}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
 
       </main>
