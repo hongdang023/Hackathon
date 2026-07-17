@@ -24,7 +24,8 @@ import {
   X,
   Grid,
   List,
-  ChevronDown
+  ChevronDown,
+  CheckCircle2
 } from 'lucide-react';
 import { Playbook, ChecklistItem } from './types';
 import { initialPlaybooks } from './mockData';
@@ -91,6 +92,51 @@ const rubrics: RubricItem[] = [
   { id: 'presentation', title: '6. Presentation, Demo & Defensibility', maxPoints: 10, description: 'Demo mượt, storytelling tốt; Phản biện xuất sắc; Chứng minh mọi tuyên bố bằng bằng chứng rõ ràng.', keywords: ['Storytelling', 'Live Demo', 'Defensibility'] }
 ];
 
+const starDescriptions: Record<string, { level: string; name: string; desc: string }[]> = {
+  tech: [
+    { level: '1★', name: 'Novice (Người mới)', desc: 'Demo giả lập hoàn toàn, code thô cứng, hệ thống chạy không ổn định.' },
+    { level: '2★', name: 'Advanced Beginner (Bắt đầu)', desc: 'Demo chạy được luồng cơ bản nhưng còn lỗi, code thô sơ và chưa tối ưu.' },
+    { level: '3★', name: 'Competent (Có năng lực)', desc: 'Hệ thống chạy ổn định, ít lỗi, demo mượt mà, code có cấu trúc rõ ràng.' },
+    { level: '4★', name: 'Proficient (Thành thạo)', desc: 'Kiến trúc tối ưu, code sạch dễ mở rộng, xử lý mượt các kịch bản thực tế.' },
+    { level: '5★', name: 'Expert (Chuyên gia)', desc: 'Hệ thống cực kỳ ổn định (Reliability), code chuẩn mực (Quality), kỹ thuật sâu sắc (Complexity).' }
+  ],
+  ainative: [
+    { level: '1★', name: 'Novice (Người mới)', desc: 'AI chỉ đóng vai trò phụ họa, hoặc chỉ là chatbot gắn thêm ngoài luồng.' },
+    { level: '2★', name: 'Advanced Beginner (Bắt đầu)', desc: 'Tích hợp AI cơ bản qua API đơn giản, chưa tối ưu ngữ cảnh hoặc luồng Agent.' },
+    { level: '3★', name: 'Competent (Có năng lực)', desc: 'AI là cốt lõi của giải pháp, có workflow và xử lý dữ liệu thông minh.' },
+    { level: '4★', name: 'Proficient (Thành thạo)', desc: 'Agentic Workflow hoạt động đa bước, tự lập kế hoạch và thực thi tối ưu.' },
+    { level: '5★', name: 'Expert (Chuyên gia)', desc: 'Đột phá AI-First Design, Agent tự hoạt động hoàn chỉnh, kiến trúc sáng tạo đột phá.' }
+  ],
+  business: [
+    { level: '1★', name: 'Novice (Người mới)', desc: 'Mô hình kinh doanh chưa rõ, chưa xác định đúng pain point của doanh nghiệp.' },
+    { level: '2★', name: 'Advanced Beginner (Bắt đầu)', desc: 'Nhận diện được pain point nhưng giải pháp chưa thực tế hoặc thiếu lộ trình.' },
+    { level: '3★', name: 'Competent (Có năng lực)', desc: 'Giải quyết đúng pain point chính, có lộ trình pilot thực tế rõ ràng.' },
+    { level: '4★', name: 'Proficient (Thành thạo)', desc: 'Lộ trình triển khai khả thi cao, chứng minh được lợi ích kinh tế hoặc vận hành.' },
+    { level: '5★', name: 'Expert (Chuyên gia)', desc: 'Problem Fit hoàn hảo, sẵn sàng Pilot Readiness cao, giá trị đo lường rõ ràng (Business Value).' }
+  ],
+  ux: [
+    { level: '1★', name: 'Novice (Người mới)', desc: 'Giao diện phức tạp, trải nghiệm AI rời rạc và khó tương tác.' },
+    { level: '2★', name: 'Advanced Beginner (Bắt đầu)', desc: 'Thiết kế có cải thiện nhưng tương tác với AI vẫn còn gượng gạo.' },
+    { level: '3★', name: 'Competent (Có năng lực)', desc: 'UX đơn giản, tự nhiên, thiết kế xoay quanh user workflow thực tế.' },
+    { level: '4★', name: 'Proficient (Thành thạo)', desc: 'Trải nghiệm AI-Native mượt mà, tương tác tự nhiên, học nhanh.' },
+    { level: '5★', name: 'Expert (Chuyên gia)', desc: 'User-Centric tối đa, Natural Interaction xuất sắc, lồng ghép hoàn hảo vào workflow.' }
+  ],
+  safety: [
+    { level: '1★', name: 'Novice (Người mới)', desc: 'AI hay bị ảo tưởng (hallucination), không kiểm soát được độ chính xác dữ liệu.' },
+    { level: '2★', name: 'Advanced Beginner (Bắt đầu)', desc: 'Có rào cản an toàn cơ bản nhưng chưa có nguồn dẫn vững chắc.' },
+    { level: '3★', name: 'Competent (Có năng lực)', desc: 'Câu trả lời có nguồn đáng tin cậy (grounded), an toàn cơ bản.' },
+    { level: '4★', name: 'Proficient (Thành thạo)', desc: 'Grounding chuẩn xác, có explainability cao và cơ chế bảo vệ tốt.' },
+    { level: '5★', name: 'Expert (Chuyên gia)', desc: 'Grounding hoàn hảo, an toàn tuyệt đối (Safety), minh bạch rõ ràng (Transparency).' }
+  ],
+  presentation: [
+    { level: '1★', name: 'Novice (Người mới)', desc: 'Thuyết trình thiếu thuyết phục, demo lỗi, không trả lời được phản biện.' },
+    { level: '2★', name: 'Advanced Beginner (Bắt đầu)', desc: 'Storytelling chưa hấp dẫn, demo còn thiếu mượt mà, phản biện lúng túng.' },
+    { level: '3★', name: 'Competent (Có năng lực)', desc: 'Kể câu chuyện rõ ràng, demo mượt mà, trả lời phản biện cơ bản tốt.' },
+    { level: '4★', name: 'Proficient (Thành thạo)', desc: 'Storytelling xuất sắc, demo ấn tượng, bảo vệ được các ý tưởng thiết kế.' },
+    { level: '5★', name: 'Expert (Chuyên gia)', desc: 'Truyền cảm hứng mạnh (Storytelling), Live Demo xuất sắc, phản biện vững chắc (Defensibility).' }
+  ]
+};
+
 export default function App() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<'dashboard' | 'judges' | 'mentors' | 'timeline' | 'copilot' | 'rubrics'>('dashboard');
@@ -100,6 +146,7 @@ export default function App() {
   const [activeAvatarUrl, setActiveAvatarUrl] = useState<{ url: string, name: string } | null>(null);
   const [viewMode, setViewMode] = useState<'detailed' | 'compact'>('detailed');
   const [openRubric, setOpenRubric] = useState<number | null>(null);
+  const [expandedRubricStarId, setExpandedRubricStarId] = useState<string | null>(null);
 
   // Playbooks State (Merged with new initial playbooks to support updates)
   const [playbooks, setPlaybooks] = useState<Playbook[]>(() => {
@@ -1280,34 +1327,85 @@ export default function App() {
 
                 <div className="space-y-4">
                   {rubrics.map((rubric) => (
-                    <div key={rubric.id} className="p-4 bg-secondary/30 rounded-lg border border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center space-x-2">
-                          <h3 className="text-sm font-bold text-foreground">{rubric.title}</h3>
-                          <span className="text-[10px] bg-white border px-1.5 py-0.5 rounded text-muted-foreground font-bold">
-                            Max {rubric.maxPoints} pts
+                    <div key={rubric.id} className="p-4 bg-secondary/30 rounded-lg border border-border flex flex-col gap-4">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <h3 className="text-sm font-bold text-foreground">{rubric.title}</h3>
+                            <span className="text-[10px] bg-white border px-1.5 py-0.5 rounded text-muted-foreground font-bold">
+                              Max {rubric.maxPoints} pts
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{rubric.description}</p>
+                        </div>
+
+                        {/* Stars input */}
+                        <div className="flex items-center space-x-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => {
+                                setRubricRatings(prev => ({ ...prev, [rubric.id]: star }));
+                                setExpandedRubricStarId(rubric.id);
+                              }}
+                              className={`text-lg transition-transform hover:scale-110 ${
+                                star <= rubricRatings[rubric.id] ? 'text-primary' : 'text-gray-200'
+                              }`}
+                            >
+                              ★
+                            </button>
+                          ))}
+                          <span className="text-xs font-bold text-foreground ml-2 font-mono w-6 text-center">
+                            {rubricRatings[rubric.id]}/5
                           </span>
                         </div>
-                        <p className="text-xs text-muted-foreground">{rubric.description}</p>
                       </div>
 
-                      {/* Stars input */}
-                      <div className="flex items-center space-x-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            type="button"
-                            onClick={() => setRubricRatings(prev => ({ ...prev, [rubric.id]: star }))}
-                            className={`text-lg transition-transform hover:scale-110 ${
-                              star <= rubricRatings[rubric.id] ? 'text-primary' : 'text-gray-200'
-                            }`}
-                          >
-                            ★
-                          </button>
-                        ))}
-                        <span className="text-xs font-bold text-foreground ml-2 font-mono w-6 text-center">
-                          {rubricRatings[rubric.id]}/5
-                        </span>
+                      {/* Detail star description expand panel */}
+                      <div className="border-t border-border/60 pt-3">
+                        <button
+                          type="button"
+                          onClick={() => setExpandedRubricStarId(expandedRubricStarId === rubric.id ? null : rubric.id)}
+                          className="flex items-center justify-between w-full px-3 py-1.5 bg-secondary/50 rounded border-t-2 border-primary text-[10px] font-bold uppercase tracking-wider text-primary hover:bg-secondary/70 transition-colors"
+                        >
+                          <span>{expandedRubricStarId === rubric.id ? 'Thu gọn mô tả' : 'Xem mô tả chi tiết tiêu chí (1-5★)'}</span>
+                          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedRubricStarId === rubric.id ? 'rotate-180' : ''}`} />
+                        </button>
+                        
+                        {expandedRubricStarId === rubric.id && (
+                          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 p-3 bg-white/70 border-x border-b border-border rounded-b">
+                            {starDescriptions[rubric.id]?.map((level, idx) => {
+                              const starNum = idx + 1;
+                              const isSelected = rubricRatings[rubric.id] === starNum;
+                              return (
+                                <div
+                                  key={starNum}
+                                  onClick={() => setRubricRatings(prev => ({ ...prev, [rubric.id]: starNum }))}
+                                  className={`cursor-pointer p-3 rounded-lg border transition-all relative flex flex-col justify-between ${
+                                    isSelected
+                                      ? 'bg-red-50/30 border-primary shadow-sm ring-1 ring-primary'
+                                      : 'bg-white/40 border-border hover:bg-white hover:border-gray-300'
+                                  }`}
+                                >
+                                  {isSelected && (
+                                    <span className="absolute top-2 right-2 text-primary">
+                                      <CheckCircle2 className="w-3.5 h-3.5 fill-primary text-white" />
+                                    </span>
+                                  )}
+                                  <div className="space-y-1">
+                                    <div className={`text-[9px] font-bold uppercase tracking-wider ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}>
+                                      {level.name}
+                                    </div>
+                                    <p className={`text-[11px] leading-relaxed mt-1.5 ${isSelected ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                                      {level.desc}
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
