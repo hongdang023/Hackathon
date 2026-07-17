@@ -83,12 +83,12 @@ interface RubricItem {
 }
 
 const rubrics: RubricItem[] = [
-  { id: 'tech', title: '1. Technical Implementation & Depth', maxPoints: 20, description: 'Kiến trúc rõ ràng, có chiều sâu; Demo chạy thật (không fake); Code, API và deployment ổn định.', keywords: ['Engineering', 'Production Readiness'] },
-  { id: 'ainative', title: '2. AI-Native Architecture & Innovation', maxPoints: 20, description: 'AI là trung tâm (không chỉ gắn thêm chatbot); Agent workflow / reasoning / context management hợp lý; Điểm mới về cách dùng AI.', keywords: ['Agentic AI', 'AI-Native'] },
-  { id: 'business', title: '3. Business Viability & Pilot Pathway', maxPoints: 20, description: 'Giải quyết nỗi đau thật của doanh nghiệp; Lộ trình pilot rõ ràng (ai dùng, khi nào, đo gì); ROI/impact hợp lý.', keywords: ['Pilot', 'Business Impact'] },
-  { id: 'ux', title: '4. AI-Native UX & Design Thinking', maxPoints: 15, description: 'UX đơn giản, tự nhiên, ít learning curve; AI tạo trải nghiệm đột phá; Thiết kế theo user workflow.', keywords: ['AI UX', 'User Workflow'] },
-  { id: 'safety', title: '5. AI Safety, Grounding & Trust', maxPoints: 15, description: 'Câu trả lời có nguồn dẫn (grounded); Cơ chế giảm hallucination; Bảo mật dữ liệu; Minh bạch / explainability.', keywords: ['Grounding', 'Trust'] },
-  { id: 'presentation', title: '6. Presentation, Demo & Defensibility', maxPoints: 10, description: 'Demo mượt, storytelling tốt; Phản biện xuất sắc; Chứng minh mọi tuyên bố bằng bằng chứng rõ ràng.', keywords: ['Evidence', 'Defensibility'] }
+  { id: 'tech', title: '1. Technical Implementation & Depth', maxPoints: 20, description: 'Kiến trúc rõ ràng, có chiều sâu; Demo chạy thật (không fake); Code, API và deployment ổn định.', keywords: ['System Reliability', 'Engineering Quality', 'Technical Complexity'] },
+  { id: 'ainative', title: '2. AI-Native Architecture & Innovation', maxPoints: 20, description: 'AI là trung tâm (không chỉ gắn thêm chatbot); Agent workflow / reasoning / context management hợp lý; Điểm mới về cách dùng AI.', keywords: ['AI-First Design', 'Agentic Workflow', 'Innovation'] },
+  { id: 'business', title: '3. Business Viability & Pilot Pathway', maxPoints: 20, description: 'Giải quyết nỗi đau thật của doanh nghiệp; Lộ trình pilot rõ ràng (ai dùng, khi nào, đo gì); ROI/impact hợp lý.', keywords: ['Problem Fit', 'Pilot Readiness', 'Business Value'] },
+  { id: 'ux', title: '4. AI-Native UX & Design Thinking', maxPoints: 15, description: 'UX đơn giản, tự nhiên, ít learning curve; AI tạo trải nghiệm đột phá; Thiết kế theo user workflow.', keywords: ['User-Centric', 'Natural Interaction', 'Workflow Integration'] },
+  { id: 'safety', title: '5. AI Safety, Grounding & Trust', maxPoints: 15, description: 'Câu trả lời có nguồn dẫn (grounded); Cơ chế giảm hallucination; Bảo mật dữ liệu; Minh bạch / explainability.', keywords: ['Grounding', 'Safety', 'Transparency'] },
+  { id: 'presentation', title: '6. Presentation, Demo & Defensibility', maxPoints: 10, description: 'Demo mượt, storytelling tốt; Phản biện xuất sắc; Chứng minh mọi tuyên bố bằng bằng chứng rõ ràng.', keywords: ['Storytelling', 'Live Demo', 'Defensibility'] }
 ];
 
 export default function App() {
@@ -433,12 +433,12 @@ export default function App() {
     
     // Mapping rubric ID to keywords in profile
     const mapping: {[key: string]: string[]} = {
-      tech: ['Architecture', 'Deployment', 'MLOps', 'Systems', 'Engineering', 'Infrastructure'],
-      ainative: ['AI Agents', 'LLM', 'Agentic', 'Reasoning', 'Context', 'AI-Native', 'MLOps'],
-      business: ['Business', 'Impact', 'ROI', 'Pilot', 'Startup', 'Domain', 'Market'],
-      ux: ['UX', 'User', 'Interface', 'Design', 'Workflow', 'Product'],
-      safety: ['Safety', 'Grounding', 'Trust', 'Hallucination', 'Bảo mật', 'Logging'],
-      presentation: ['Pitching', 'Demo', 'Storytelling', 'Defensibility', 'Presentation']
+      tech: ['Architecture', 'Deployment', 'MLOps', 'Systems', 'Engineering', 'Infrastructure', 'Reliability', 'Quality', 'Complexity'],
+      ainative: ['AI Agents', 'LLM', 'Agentic', 'Reasoning', 'Context', 'AI-Native', 'MLOps', 'AI-First', 'Workflow', 'Innovation'],
+      business: ['Business', 'Impact', 'ROI', 'Pilot', 'Startup', 'Domain', 'Market', 'Problem', 'Fit', 'Readiness', 'Value'],
+      ux: ['UX', 'User', 'Interface', 'Design', 'Workflow', 'Product', 'Centric', 'Natural', 'Interaction', 'Integration'],
+      safety: ['Safety', 'Grounding', 'Trust', 'Hallucination', 'Bảo mật', 'Logging', 'Transparency', 'Explainability'],
+      presentation: ['Pitching', 'Demo', 'Storytelling', 'Defensibility', 'Presentation', 'Live']
     };
 
     const targetKeywords = mapping[weakestRubric.id] || [];
@@ -1813,7 +1813,11 @@ export default function App() {
                     'Demo chạy thật (không fake/hardcode)',
                     'Code, API, deployment hoạt động ổn định'
                   ],
-                  keywords: ['Engineering', 'Production Readiness']
+                  keywords: [
+                    'System Reliability (Hệ thống chạy ổn định, ít lỗi, demo mượt)',
+                    'Engineering Quality (Code có cấu trúc, dễ mở rộng và bảo trì)',
+                    'Technical Complexity (Giải quyết bài toán bằng kỹ thuật có chiều sâu)'
+                  ]
                 },
                 {
                   num: 2,
@@ -1824,7 +1828,11 @@ export default function App() {
                     'Agent workflow / reasoning / context management hợp lý',
                     'Có điểm mới về kiến trúc hoặc cách dùng AI'
                   ],
-                  keywords: ['Agentic AI', 'AI-Native']
+                  keywords: [
+                    'AI-First Design (AI là trung tâm, không chỉ tính năng bổ sung)',
+                    'Agentic Workflow (AI tự lập kế hoạch và thực hiện nhiều bước)',
+                    'Innovation (Cách tiếp cận mới, khác biệt so với giải pháp phổ biến)'
+                  ]
                 },
                 {
                   num: 3,
@@ -1835,7 +1843,11 @@ export default function App() {
                     'Có lộ trình pilot rõ ràng (ai dùng, dùng khi nào, đo gì)',
                     'ROI hoặc business impact hợp lý'
                   ],
-                  keywords: ['Pilot', 'Business Impact']
+                  keywords: [
+                    'Problem Fit (Giải đúng pain point của doanh nghiệp)',
+                    'Pilot Readiness (Có lộ trình triển khai thực tế rõ ràng)',
+                    'Business Value (Tạo giá trị đo lường được cho tổ chức)'
+                  ]
                 },
                 {
                   num: 4,
@@ -1846,7 +1858,11 @@ export default function App() {
                     'AI tạo trải nghiệm tốt hơn chứ không chỉ thay giao diện',
                     'Thiết kế theo user workflow'
                   ],
-                  keywords: ['AI UX', 'User Workflow']
+                  keywords: [
+                    'User-Centric (Thiết kế xoay quanh nhu cầu người dùng)',
+                    'Natural Interaction (Tương tác với AI đơn giản và tự nhiên)',
+                    'Workflow Integration (Phù hợp quy trình làm việc hiện tại)'
+                  ]
                 },
                 {
                   num: 5,
@@ -1857,7 +1873,11 @@ export default function App() {
                     'Có cơ chế giảm hallucination / bảo vệ dữ liệu',
                     'Minh bạch, có logging hoặc explainability'
                   ],
-                  keywords: ['Grounding', 'Trust']
+                  keywords: [
+                    'Grounding (Câu trả lời dựa trên dữ liệu đáng tin cậy)',
+                    'Safety (Giảm rủi ro và hành vi không mong muốn của AI)',
+                    'Transparency (Giải thích được nguồn gốc và quyết định của AI)'
+                  ]
                 },
                 {
                   num: 6,
@@ -1868,7 +1888,11 @@ export default function App() {
                     'Trả lời phản biện tốt',
                     'Chứng minh được mọi claim bằng evidence'
                   ],
-                  keywords: ['Evidence', 'Defensibility']
+                  keywords: [
+                    'Storytelling (Kể câu chuyện rõ ràng, thuyết phục)',
+                    'Live Demo (Demo mượt, thể hiện đúng giá trị sản phẩm)',
+                    'Defensibility (Bảo vệ quyết định thiết kế trước phản biện)'
+                  ]
                 }
               ].map((rubric) => {
                 const isOpen = openRubric === rubric.num;
