@@ -32,17 +32,15 @@ export const initialPlaybooks: Playbook[] = [
       'AI đưa ra quyết định đánh giá năng lực một cách thiên vị, thiếu minh bạch'
     ],
     likelyQuestions: [
-      'Làm cách nào bạn bảo vệ dữ liệu học tập nhạy cảm của học viên khi gửi qua API của bên thứ ba?',
-      'Hệ thống có cơ chế gì để giải thích cho học viên biết vì sao AI lại đánh giá họ yếu ở một kỹ năng cụ thể?',
-      'Việc phân tích dữ liệu đa phương thức của học viên được bảo mật như thế nào ở tầng thiết bị và lưu trữ?'
+      'Hệ thống của bạn dùng Bayesian Update để liên tục cập nhật Learner Model. Làm cách nào bạn nặc danh hóa (anonymize) các update log này ở gateway trước khi gọi API, đảm bảo tuân thủ quyền trẻ em mà không làm tăng Cost (Rubric 3) cho EduOne?',
+      'Kiến trúc của bạn gom 2 vòng lặp (Learner Loop & Content Loop) dùng chung 1 AI Brain. Việc dùng chung này có nguy cơ nào dẫn đến Data Poisoning hoặc rò rỉ dữ liệu cá nhân của học sinh sang phần Content Generate không?',
+      'Làm thế nào để hệ thống giải thích (explainability) cho học viên K-12 hiểu vì sao Bayesian Model lại đưa ra Recommendation này, mà giao diện vẫn đơn giản tự nhiên (UX/Rubric 4)?'
     ],
     bestMomentToAsk: [
       'Sau khi chốt Architecture',
       'Sau khi hoàn thành MVP'
     ],
     bestQuestionsToAsk: [
-      'Với dữ liệu học tập của học sinh, chúng em nên triển khai giải pháp nặc danh hóa (anonymization) nào ở gateway trước khi gửi dữ liệu sang các API như OpenAI?',
-      'Làm thế nào để xây dựng một cơ chế explainability (giải thích được) tinh gọn cho học viên mà không làm ảnh hưởng đến hiệu năng hệ thống?'
     ],
     actionForTeam: [
       { id: 'act-sonny-1', text: 'Thiết lập sơ đồ luồng dữ liệu (Data Flow) chú trọng bảo mật & nặc danh hóa', checked: false },
@@ -103,20 +101,15 @@ export const initialPlaybooks: Playbook[] = [
       'Không giải thích lý do chọn Architecture'
     ],
     likelyQuestions: [
-      'Vì sao chọn Architecture này?',
-      'Nếu có 1.000 users thì sao?',
-      'Nếu LLM fail thì fallback thế nào?',
-      'Cost/token là bao nhiêu?',
-      'Có monitor hệ thống không?'
+      'Kiến trúc Dual Closed-loop trông rất ổn trên lý thuyết, nhưng với ngân sách của một tổ chức phi lợi nhuận (Rubric 3), bạn tính toán Cost per Query như thế nào khi Learner Intelligence phải liên tục chạy Inference trên 50.000 học viên?',
+      'Quá trình Backward Reasoning trên cấu trúc Competency Graph có thể rất tốn kém tài nguyên tính toán. Bạn thiết kế cơ chế caching nào để đảm bảo hệ thống phản hồi mượt mà (UX/Rubric 4) trong giờ cao điểm?',
+      'Nếu mô hình sinh Content (Content Loop) quá tải và bị sập, cơ chế fallback của bạn có làm gián đoạn trải nghiệm học tập đang diễn ra ở Learner Loop không?'
     ],
     bestMomentToAsk: [
       'Sau khi chốt Architecture',
       'Trước khi Freeze MVP'
     ],
     bestQuestionsToAsk: [
-      'Nếu chỉ còn 24 giờ, anh sẽ ưu tiên cải thiện phần nào của hệ thống?',
-      'Điều gì khiến anh tin rằng một AI Agent đủ "production-ready"?',
-      'Có lỗi kiến trúc nào các team hackathon thường mắc mà bọn em nên tránh?'
     ],
     actionForTeam: [
       { id: 'act-1', text: 'Chuẩn bị sơ đồ Architecture', checked: true },
@@ -182,17 +175,15 @@ export const initialPlaybooks: Playbook[] = [
       'Thiếu phân tích về chi phí và tài nguyên vận hành thực tế'
     ],
     likelyQuestions: [
-      'Giải pháp này giải quyết được painpoint gì cho xã hội hoặc tổ chức lớn?',
-      'Làm thế nào để đảm bảo tính khả thi khi triển khai trên quy mô lớn liên tỉnh?',
-      'Hệ thống có tuân thủ Luật An ninh mạng và các quy định quản lý dữ liệu cá nhân không?'
+      'Bạn nói Dual Closed-loop giúp tự động hóa quá trình học. Nhưng đứng ở góc độ chính sách chuyển đổi số (Rubric 3), làm sao đảm bảo các quyết định của AI Recommendation không đi ngược lại mục tiêu giáo dục K-12 cốt lõi của Bộ GD&ĐT?',
+      'STEAM for Vietnam là tổ chức phi lợi nhuận. Kiến trúc Bayesian Learning của bạn có khả năng được mở rộng (scale) để chuyển giao như một giải pháp Digital Transformation cho các trường công lập không?',
+      'Dữ liệu từ Learner Loop rất quan trọng. Bạn đã có phương án bảo mật dữ liệu nào để tuân thủ Nghị định 13 về bảo vệ dữ liệu cá nhân của trẻ em chưa?'
     ],
     bestMomentToAsk: [
       'Sau khi chốt Problem Framing',
       'Trước khi Pitch'
     ],
     bestQuestionsToAsk: [
-      'Từ góc nhìn chính sách chuyển đổi số, đâu là rào cản lớn nhất khi đưa hệ thống tự học này vào các trường học công lập?',
-      'Những chỉ số (metrics) nào chúng em nên đo lường trong giai đoạn pilot để chứng minh tính hiệu quả của mô hình tự học?'
     ],
     actionForTeam: [
       { id: 'act-trang-1', text: 'Nghiên cứu cơ chế bảo vệ dữ liệu cá nhân (Nghị định 13)', checked: false },
@@ -249,17 +240,15 @@ export const initialPlaybooks: Playbook[] = [
       'Thiếu kiểm thử tải hoặc độ ổn định của API'
     ],
     likelyQuestions: [
-      'Sơ đồ kiến trúc chi tiết và luồng dữ liệu của hệ thống như thế nào?',
-      'Cơ sở dữ liệu của bạn được thiết kế tối ưu ra sao để lưu trữ Learner Model liên tục thay đổi?',
-      'Nếu API của OpenAI hoặc Anthropic bị quá tải hoặc tăng giá đột ngột, bạn có giải pháp thay thế nào?'
+      'Việc chạy Backward Reasoning trên một Knowledge Graph phức tạp đòi hỏi nhiều tài nguyên. Bạn phân bổ kiến trúc Cloud như thế nào để tối ưu chi phí (Rubric 3) cho tổ chức phi lợi nhuận?',
+      'Bạn xử lý tính nhất quán dữ liệu (Data Consistency) giữa Learner Loop và Content Loop như thế nào khi 2 vòng lặp này hoạt động song song và chia sẻ chung một AI Brain?',
+      'Hãy chứng minh kiến trúc Bayesian Update của bạn không phải là điểm nghẽn cổ chai (bottleneck) khi hệ thống scale lên 1 triệu học sinh K-12.'
     ],
     bestMomentToAsk: [
       'Sau khi chốt Architecture',
       'Sau khi AI chạy được'
     ],
     bestQuestionsToAsk: [
-      'Làm thế nào để tối ưu hóa việc đồng bộ hóa dữ liệu từ Evidence Store lên Learner Model mà không làm quá tải cơ sở dữ liệu?',
-      'Chúng em nên chuẩn bị cấu trúc dữ liệu thế nào để hỗ trợ tốt nhất cho việc mở rộng tính năng giải thích quyết định AI (Explainable AI)?'
     ],
     actionForTeam: [
       { id: 'act-thang-1', text: 'Thiết kế sơ đồ kiến trúc hệ thống chuẩn khoa học máy tính', checked: false },
@@ -316,17 +305,15 @@ export const initialPlaybooks: Playbook[] = [
       'Thiếu tính nhất quán trong các mô hình dữ liệu năng lực'
     ],
     likelyQuestions: [
-      'Thuật toán hay mô hình toán nào được sử dụng để cập nhật Learner Model theo thời gian thực từ các Evidence?',
-      'Bạn cấu trúc Knowledge Graph và Competency Framework thế nào trong cơ sở dữ liệu?',
-      'AI đưa ra quyết định gợi ý bài học dựa trên cơ sở khoa học giáo dục cụ thể nào?'
+      'Với mô hình Competency-Based Education (CBE), bạn sử dụng phương pháp thống kê nào để tính toán Confidence Score của AI khi đưa ra Recommendation, thay vì chỉ dựa vào LLM prompt?',
+      'Mô hình Bayesian Learning của bạn cần bao nhiêu điểm dữ liệu (Evidence) từ Learner Loop để có thể hội tụ và phản ánh chính xác năng lực thực sự của một học sinh?',
+      'Việc AI sinh ra Content mới liên tục có thể dẫn đến hiện tượng Model Drift hoặc thiên lệch (bias) đối với một số nhóm học sinh không? (Rubric 5)'
     ],
     bestMomentToAsk: [
       'Sau khi chốt Problem Framing',
       'Sau khi chốt Solution'
     ],
     bestQuestionsToAsk: [
-      'Để giải quyết bài toán cập nhật Learner Model một cách khoa học, thầy khuyên chúng em nên áp dụng mô hình toán học nào giữa Bayesian Network và thuật toán lan truyền đồ thị?',
-      'Làm thế nào để thiết kế một Knowledge Graph có khả năng tự tiến hóa khi kiến thức mới được thêm vào hệ thống?'
     ],
     actionForTeam: [
       { id: 'act-bao-1', text: 'Làm rõ cấu trúc Competency Framework & Knowledge Graph trong tài liệu/slide', checked: false },
@@ -383,17 +370,15 @@ export const initialPlaybooks: Playbook[] = [
       'Độ trễ quá lớn ảnh hưởng nghiêm trọng đến trải nghiệm người dùng'
     ],
     likelyQuestions: [
-      'Mô hình của bạn có thực sự hiểu tốt tiếng Việt chuyên ngành giáo dục không?',
-      'Bạn kiểm soát hiện tượng hallucination thế nào khi AI tự động chấm điểm bài làm của học sinh?',
-      'Inference cost (chi phí chạy AI) cho một học sinh trong 1 tháng dự kiến là bao nhiêu?'
+      'Với học sinh Việt Nam, việc dùng RAG cho Content Loop có thể gặp rào cản về tiếng Việt. Bạn xử lý vấn đề tokenization và retrieval tiếng Việt như thế nào để tối ưu Cost (Rubric 3)?',
+      'Bạn có cân nhắc dùng các SLM (Small Language Models) tối ưu hóa riêng cho giáo dục thay vì phụ thuộc 100% vào các mô hình thương mại đắt tiền cho tính năng AI Content Draft không?',
+      'Kỹ thuật prompt nào bạn đang dùng để ép LLM không bị Hallucinate kiến thức sai lệch khi sinh đề thi toán cho học sinh K-12 (Rubric 5)?'
     ],
     bestMomentToAsk: [
       'Sau khi AI chạy được',
       'Trước khi Freeze MVP'
     ],
     bestQuestionsToAsk: [
-      'Với bài toán tự chấm điểm tự luận bằng tiếng Việt, anh gợi ý phương pháp grounding nào tốt nhất để giảm thiểu ảo giác của mô hình?',
-      'Làm thế nào để tối ưu hóa latency (độ trễ) khi tích hợp RAG vào quy trình đánh giá thời gian thực?'
     ],
     actionForTeam: [
       { id: 'act-william-1', text: 'Tối ưu hóa và kiểm thử Prompt tiếng Việt của RAG', checked: false },
@@ -450,17 +435,16 @@ export const initialPlaybooks: Playbook[] = [
       'Giải pháp chắp vá, thiếu cơ sở khoa học máy tính'
     ],
     likelyQuestions: [
-      'Thuật toán AI cốt lõi giải quyết bài toán của bạn là gì?',
-      'Bạn tối ưu hóa mô hình học máy này như thế nào để đảm bảo hiệu năng?',
-      'Nếu API bên thứ ba bị gián đoạn, hệ thống của bạn có cơ chế fallback nào không?'
+      'Làm thế nào để hệ thống Recommendation phản ứng theo thời gian thực (real-time) với độ trễ thấp (UX/Rubric 4) khi cập nhật Learner Model thông qua Bayesian Update?',
+      'Khi Content Loop sinh ra bài tập bị lỗi, cơ chế Human Review có đủ công cụ kỹ thuật để bắt lỗi nhanh chóng mà không làm tăng tải cho giáo viên không?'
     ],
     bestMomentToAsk: [
       'Sau khi chốt Solution',
       'Sau khi AI chạy được'
     ],
     bestQuestionsToAsk: [
-      'Với bài toán của nhóm, chúng em nên tối ưu hóa mô hình học máy theo hướng nào để đạt hiệu năng tốt nhất trong thời gian ngắn?',
-      'Làm thế nào để thiết kế một hệ thống AI có khả năng giải thích được (Explainable AI) một cách khoa học nhất?'
+      'Theo anh, bọn em nên chọn kiến trúc Vector Database nào phù hợp nhất để lưu trữ Competency Graph của 50.000 học sinh mà chi phí vận hành vẫn ở mức tối thiểu?',
+      'Với kinh nghiệm làm AI Product, anh thấy bọn em nên xây dựng pipeline ML nào để tự động hóa việc test chất lượng của các AI Content Draft trước khi đưa cho giáo viên duyệt?'
     ],
     actionForTeam: [
       { id: 'act-viet-1', text: 'Chuẩn bị giải trình chi tiết về thuật toán AI cốt lõi', checked: false },
@@ -516,17 +500,16 @@ export const initialPlaybooks: Playbook[] = [
       'Thiếu nghiên cứu về tâm lý học lứa tuổi và phương pháp giáo dục STEM chuẩn hóa'
     ],
     likelyQuestions: [
-      'Giải pháp này giúp học sinh học STEM/AI hiệu quả hơn thế nào so với cách truyền thống?',
-      'Giáo viên mầm non và phổ thông có dễ dàng sử dụng nền tảng này trong lớp học không?',
-      'Bạn đã áp dụng lý thuyết giáo dục hay mô hình sư phạm nào để thiết kế các bài học này?'
+      'Hệ thống Backward Reasoning của AI có phù hợp với chuẩn sư phạm 5E và năng lực nhận thức của học sinh cấp 1, cấp 2 không (Rubric 4)?',
+      'Giáo viên thường quá tải. Việc thêm luồng Human Review trong Content Loop có thực sự làm giảm tải cho họ không, hay lại tạo ra một gánh nặng mới?'
     ],
     bestMomentToAsk: [
       'Sau khi chốt Problem Framing',
       'Sau khi hoàn thành MVP'
     ],
     bestQuestionsToAsk: [
-      'Từ kinh nghiệm đào tạo STEM mầm non, cô thấy khó khăn lớn nhất của trẻ em Việt Nam khi tiếp cận công nghệ số là gì?',
-      'Làm thế nào để chúng em lồng ghép các hoạt động AI/STEM vào ứng dụng sao cho vừa kích thích tư duy sáng tạo hay tò mò học hỏi?'
+      'Với tư cách là chuyên gia sư phạm, cô đánh giá cách chia nhỏ Competency thành các Indicators của hệ thống đã đủ để đo lường chính xác tiến độ học tập của học sinh K-12 chưa?',
+      'Làm sao để giao diện (UX) của luồng Human Review thực sự thân thiện, khiến các giáo viên tình nguyện muốn dùng tính năng này thay vì quay lại cách soạn bài truyền thống?'
     ],
     actionForTeam: [
       { id: 'act-hien-1', text: 'Nghiên cứu phương pháp giảng dạy STEM chuẩn (mô hình 5E, EDP)', checked: false },
@@ -650,17 +633,16 @@ export const initialPlaybooks: Playbook[] = [
       'Vector Database thiết kế không tối ưu, làm tăng độ trễ truy xuất dữ liệu RAG'
     ],
     likelyQuestions: [
-      'Kiến trúc RAG của bạn giải quyết bài toán độ trễ (latency) và giới hạn request (rate limits) thế nào?',
-      'Hệ thống backend scale ra sao để phục vụ đồng thời hàng ngàn request thời gian thực?',
-      'Bạn lưu trữ và quản lý dữ liệu ngữ cảnh (context/conversation history) của AI Agent như thế nào?'
+      'Mô hình Dual Closed-loop yêu cầu giao tiếp liên tục giữa các microservices. Bạn thiết kế luồng xử lý bất đồng bộ (asynchronous) như thế nào để đảm bảo hệ thống không sập khi có lượng tải đột biến (Rubric 1)?',
+      'Mỗi lần Learner Loop ghi nhận một Evidence, hệ thống phải cập nhật Bayesian Model. Việc này sẽ tốn rất nhiều I/O. Phương án Database Optimization của bạn là gì?'
     ],
     bestMomentToAsk: [
       'Sau khi chốt Architecture',
       'Sau khi AI chạy được'
     ],
     bestQuestionsToAsk: [
-      'Để tối ưu hóa chi phí vận hành và độ trễ của hệ thống RAG lớn, anh khuyên chúng em nên áp dụng chiến lược caching nào ở tầng backend?',
-      'Những lỗi thiết kế hạ tầng backend/API nào các team hackathon thường mắc khi tích hợp AI Agent mà bọn em nên tránh?'
+      'Anh Dương có thể gợi ý cho bọn em một mô hình caching strategy nào hiệu quả nhất để giảm số lượng API call tới LLM trong luồng Recommendation Engine không?',
+      'Bọn em nên chọn stack hạ tầng nào trên Cloud để Pilot (Rubric 3) vừa đảm bảo hiệu năng nhưng vẫn nằm trong ngân sách của một dự án phi lợi nhuận?'
     ],
     actionForTeam: [
       { id: 'act-duong-1', text: 'Vẽ sơ đồ kiến trúc Backend chi tiết (Backend Architecture Diagram)', checked: false },

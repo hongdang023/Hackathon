@@ -93,7 +93,7 @@ const rubrics: RubricItem[] = [
 
 export default function App() {
   // Navigation State
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'playbook' | 'timeline' | 'copilot' | 'rubrics'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'judges' | 'mentors' | 'timeline' | 'copilot' | 'rubrics'>('dashboard');
   const [currentPlaybookId, setCurrentPlaybookId] = useState<string | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -122,6 +122,7 @@ export default function App() {
               highlyValues: initPb.highlyValues,
               deductions: initPb.deductions,
               likelyQuestions: initPb.likelyQuestions,
+              bestQuestionsToAsk: initPb.bestQuestionsToAsk,
               cheatSheet: initPb.cheatSheet
             };
           }
@@ -204,7 +205,7 @@ export default function App() {
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('All');
-  const [roleFilter, setRoleFilter] = useState<string>('All');
+  // const [roleFilter, setRoleFilter] = useState<string>('All');
 
   // Dynamic status check based on current time
   const [activeActivity, setActiveActivity] = useState<TimelineEvent | null>(null);
@@ -392,7 +393,14 @@ export default function App() {
                           p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.expertise.some(e => e.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesType = typeFilter === 'All' || p.type === typeFilter;
-    const matchesRole = roleFilter === 'All' || p.role === roleFilter;
+    
+    // Role filter is implicitly determined by activeTab (judges vs mentors)
+    let expectedRole = 'All';
+    if (activeTab === 'judges') expectedRole = 'Judge';
+    if (activeTab === 'mentors') expectedRole = 'Mentor';
+
+    const matchesRole = expectedRole === 'All' ? true : p.role === expectedRole;
+
     return matchesSearch && matchesType && matchesRole;
   });
 
@@ -482,10 +490,16 @@ export default function App() {
               Dashboard
             </button>
             <button 
-              onClick={() => { setActiveTab('playbook'); setCurrentPlaybookId(null); setIsAddingNew(false); setIsEditing(false); }}
-              className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${activeTab === 'playbook' || currentPlaybookId || isAddingNew ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              onClick={() => { setActiveTab('judges'); setCurrentPlaybookId(null); setIsAddingNew(false); setIsEditing(false); setTypeFilter('All'); }}
+              className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${(activeTab as string) === 'judges' || (currentPlaybookId && selectedPlaybook?.role === 'Judge') || (isAddingNew && (activeTab as string) === 'judges') ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Playbooks
+              Judges
+            </button>
+            <button 
+              onClick={() => { setActiveTab('mentors'); setCurrentPlaybookId(null); setIsAddingNew(false); setIsEditing(false); setTypeFilter('All'); }}
+              className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${(activeTab as string) === 'mentors' || (currentPlaybookId && selectedPlaybook?.role === 'Mentor') || (isAddingNew && (activeTab as string) === 'mentors') ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Mentors
             </button>
             <button 
               onClick={() => { setActiveTab('timeline'); setCurrentPlaybookId(null); setIsAddingNew(false); setIsEditing(false); }}
@@ -634,7 +648,7 @@ export default function App() {
         )}
 
         {/* 2. Playbooks List View */}
-        {activeTab === 'playbook' && !currentPlaybookId && !isAddingNew && (
+        {(activeTab === 'judges' || activeTab === 'mentors') && !currentPlaybookId && !isAddingNew && (
           <div className="space-y-6 animate-fadeIn">
             {/* Search, Filter & Add Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-secondary p-4 rounded-xl border border-border">
@@ -654,25 +668,28 @@ export default function App() {
                   <Filter className="w-3.5 h-3.5 text-muted-foreground" />
                   <span>Lọc:</span>
                 </div>
-                <select 
-                  value={roleFilter} 
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  className="bg-white border border-border px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:border-primary"
-                >
-                  <option value="All">Tất cả Vai trò</option>
-                  <option value="Judge">Giám khảo (Judge)</option>
-                  <option value="Mentor">Mentor</option>
-                </select>
+                {/* Role filter is implicitly handled by the active tab, so we don't need it in UI anymore */}
                 <select 
                   value={typeFilter} 
                   onChange={(e) => setTypeFilter(e.target.value)}
                   className="bg-white border border-border px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:border-primary"
                 >
                   <option value="All">Tất cả Phân loại</option>
-                  <option value="Domain Expert">Domain Expert</option>
-                  <option value="Technical Judge">Technical Judge</option>
-                  <option value="Non-tech Industry Judge">Non-tech Industry Judge</option>
-                  <option value="Senior Judge">Senior Judge</option>
+                  {activeTab === 'judges' && (
+                    <>
+                      <option value="Senior Judge">Senior Judge</option>
+                      <option value="Technical Judge">Technical Judge</option>
+                      <option value="Non-tech Industry Judge">Non-tech Industry Judge</option>
+                      <option value="Domain Expert">Domain Expert</option>
+                    </>
+                  )}
+                  {activeTab === 'mentors' && (
+                    <>
+                      <option value="Domain Expert">Domain Expert</option>
+                      <option value="Technical Judge">Technical Mentor</option>
+                      <option value="Non-tech Industry Judge">Industry Mentor</option>
+                    </>
+                  )}
                 </select>
                 
                 {/* View Mode Toggle */}
@@ -875,7 +892,7 @@ export default function App() {
             {/* Detail Navigation */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-4">
               <button 
-                onClick={() => { setCurrentPlaybookId(null); setActiveTab('playbook'); }}
+                onClick={() => { setCurrentPlaybookId(null); setActiveTab(selectedPlaybook?.role === 'Mentor' ? 'mentors' : 'judges'); }}
                 className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" /> Quay lại danh sách
@@ -1406,7 +1423,7 @@ export default function App() {
 
                         <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
                           <button 
-                            onClick={() => { setCurrentPlaybookId(pb.id); setActiveTab('playbook'); }}
+                            onClick={() => { setCurrentPlaybookId(pb.id); setActiveTab(pb.role === 'Mentor' ? 'mentors' : 'judges'); }}
                             className="text-xs text-primary font-bold hover:underline flex items-center gap-0.5"
                           >
                             Xem toàn bộ Playbook của họ <ArrowRight className="w-3.5 h-3.5" />
