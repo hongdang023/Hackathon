@@ -393,6 +393,24 @@ export default function App() {
   const [openRubric, setOpenRubric] = useState<number | null>(null);
   const [expandedRubricStarId, setExpandedRubricStarId] = useState<string | null>(null);
   const [expandedVideoRubricId, setExpandedVideoRubricId] = useState<string | null>(null);
+  const [expandedVideoCategories, setExpandedVideoCategories] = useState<string[]>(['b1', 'b2', 'b3', 'b4', 'b5']);
+  const [videoScores, setVideoScores] = useState<Record<string, number>>(() => {
+    const saved = localStorage.getItem('vaic_video_scores');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return {};
+      }
+    }
+    return {};
+  });
+
+  const handleSelectScore = (subItemId: string, score: number) => {
+    const newScores = { ...videoScores, [subItemId]: score };
+    setVideoScores(newScores);
+    localStorage.setItem('vaic_video_scores', JSON.stringify(newScores));
+  };
 
   // Playbooks State (Merged with new initial playbooks to support updates)
   const [playbooks, setPlaybooks] = useState<Playbook[]>(() => {
@@ -2301,111 +2319,192 @@ export default function App() {
         )}
 
         {/* 6. Demo Video Rubrics View */}
-        {activeTab === 'demo-video-rubrics' && !currentPlaybookId && !isAddingNew && (
-          <div className="space-y-8 animate-fadeIn">
-            {/* Header Banner */}
-            <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl p-6 relative overflow-hidden">
-              <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-40 h-40 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/20 p-3 rounded-lg text-primary">
-                  <Video className="w-8 h-8" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground">B. Demo Video & User Experience Rubrics</h2>
-                  <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
-                    <strong>Mục tiêu:</strong> Thể hiện một sản phẩm <strong>thực sự hoạt động dưới góc nhìn của người dùng cuối</strong>, truyền tải rõ giá trị AI và tạo trải nghiệm xem chuyên nghiệp.
-                  </p>
+        {activeTab === 'demo-video-rubrics' && !currentPlaybookId && !isAddingNew && (() => {
+          const totalItems = 16;
+          const gradedCount = Object.keys(videoScores).length;
+          const totalScore = Object.values(videoScores).reduce((sum, score) => sum + score, 0);
+          const averageScore = totalItems > 0 ? Math.round(totalScore / totalItems) : 0;
+
+          return (
+            <div className="space-y-8 animate-fadeIn">
+              {/* Header Banner */}
+              <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl p-6 relative overflow-hidden">
+                <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-40 h-40 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/20 p-3 rounded-lg text-primary shrink-0">
+                      <Video className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight text-foreground">B. Demo Video & User Experience Rubrics</h2>
+                      <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+                        <strong>Mục tiêu:</strong> Thể hiện một sản phẩm <strong>thực sự hoạt động dưới góc nhìn của người dùng cuối</strong>, truyền tải rõ giá trị AI và tạo trải nghiệm xem chuyên nghiệp.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Summary / Self-assessment widget */}
+                  <div className="bg-card border border-border rounded-xl p-4 shrink-0 w-full md:w-80 shadow-sm flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Tự đánh giá Video</span>
+                      <span className="text-xs font-extrabold text-primary">{gradedCount}/{totalItems} Tiêu chí</span>
+                    </div>
+                    <div className="flex items-end gap-2 mb-3">
+                      <span className="text-3xl font-black text-foreground">{averageScore}%</span>
+                      <span className="text-xs text-muted-foreground mb-1">điểm trung bình</span>
+                    </div>
+                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-primary transition-all duration-500 rounded-full" 
+                        style={{ width: `${averageScore}%` }} 
+                      />
+                    </div>
+                    {gradedCount > 0 && (
+                      <button 
+                        onClick={() => {
+                          if (confirm('Bạn có chắc muốn đặt lại toàn bộ điểm tự đánh giá?')) {
+                            setVideoScores({});
+                            localStorage.removeItem('vaic_video_scores');
+                          }
+                        }}
+                        className="text-[10px] text-rose-500 hover:text-rose-600 font-bold uppercase mt-3 self-end tracking-wider hover:underline"
+                      >
+                        Đặt lại điểm
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Rubrics Grid */}
-            <div className="space-y-6">
-              {demoVideoRubricsData.map((category) => (
-                <div key={category.id} className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
-                  {/* Category Header */}
-                  <div className="bg-secondary/40 px-6 py-4 border-b border-border">
-                    <h3 className="text-lg font-bold text-foreground">{category.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">{category.desc}</p>
-                  </div>
-
-                  {/* Subcategories List */}
-                  <div className="divide-y divide-border">
-                    {category.items.map((subItem) => {
-                      const isExpanded = expandedVideoRubricId === subItem.id;
-                      return (
-                        <div key={subItem.id} className="p-6 transition-colors hover:bg-secondary/10">
-                          {/* Subcategory Header */}
-                          <div 
-                            className="flex items-center justify-between cursor-pointer"
-                            onClick={() => setExpandedVideoRubricId(isExpanded ? null : subItem.id)}
-                          >
-                            <div className="space-y-1">
-                              <h4 className="font-bold text-foreground text-sm sm:text-base flex items-center gap-2">
-                                {subItem.title}
-                              </h4>
-                              <p className="text-xs text-muted-foreground font-medium">
-                                BGK đang hỏi: <span className="text-foreground italic">"{subItem.question}"</span>
-                              </p>
-                            </div>
-                            <div className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-secondary transition-colors">
-                              <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
-                            </div>
-                          </div>
-
-                          {/* Expanded Content: Level Stepper / Cards */}
-                          {isExpanded && (
-                            <div className="mt-6 space-y-4 animate-fadeIn">
-                              <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                                {subItem.levels.map((lvl, index) => {
-                                  // Determine highlight color based on level score
-                                  const getBgColor = (pts: string) => {
-                                    if (pts === '100%') return 'border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10';
-                                    if (pts === '75%') return 'border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10';
-                                    if (pts === '50%') return 'border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10';
-                                    if (pts === '25%') return 'border-orange-500/30 bg-orange-500/5 hover:bg-orange-500/10';
-                                    return 'border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/10';
-                                  };
-
-                                  const getBadgeColor = (pts: string) => {
-                                    if (pts === '100%') return 'bg-emerald-500 text-white';
-                                    if (pts === '75%') return 'bg-blue-500 text-white';
-                                    if (pts === '50%') return 'bg-amber-500 text-white';
-                                    if (pts === '25%') return 'bg-orange-500 text-white';
-                                    return 'bg-rose-500 text-white';
-                                  };
-
-                                  return (
-                                    <div 
-                                      key={index} 
-                                      className={`border rounded-lg p-4 flex flex-col justify-between transition-all duration-200 ${getBgColor(lvl.pts)}`}
-                                    >
-                                      <div>
-                                        <div className="flex items-center justify-between mb-2">
-                                          <span className="text-[10px] font-bold tracking-wider uppercase opacity-80 text-foreground">{lvl.level}</span>
-                                          <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${getBadgeColor(lvl.pts)}`}>
-                                            {lvl.pts}
-                                          </span>
-                                        </div>
-                                        <p className="text-xs text-foreground/90 font-medium leading-relaxed">
-                                          {lvl.desc}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
+              {/* Rubrics Grid */}
+              <div className="space-y-6">
+                {demoVideoRubricsData.map((category) => {
+                  const isCatExpanded = expandedVideoCategories.includes(category.id);
+                  return (
+                    <div key={category.id} className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                      {/* Category Header */}
+                      <div 
+                        className="bg-secondary/40 px-6 py-4 border-b border-border flex items-center justify-between cursor-pointer select-none hover:bg-secondary/60 transition-colors"
+                        onClick={() => {
+                          setExpandedVideoCategories(prev => 
+                            prev.includes(category.id) 
+                              ? prev.filter(id => id !== category.id) 
+                              : [...prev, category.id]
+                          );
+                        }}
+                      >
+                        <div>
+                          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                            {category.title}
+                          </h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">{category.desc}</p>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+                        <button className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-secondary transition-colors">
+                          <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${isCatExpanded ? 'rotate-180' : ''}`} />
+                        </button>
+                      </div>
+
+                      {/* Subcategories List */}
+                      {isCatExpanded && (
+                        <div className="divide-y divide-border">
+                          {category.items.map((subItem) => {
+                            const isExpanded = expandedVideoRubricId === subItem.id;
+                            const currentScore = videoScores[subItem.id];
+                            const isGraded = currentScore !== undefined;
+
+                            return (
+                              <div key={subItem.id} className="p-6 transition-colors hover:bg-secondary/5">
+                                {/* Subcategory Header */}
+                                <div 
+                                  className="flex items-center justify-between cursor-pointer select-none"
+                                  onClick={() => setExpandedVideoRubricId(isExpanded ? null : subItem.id)}
+                                >
+                                  <div className="space-y-1">
+                                    <h4 className="font-bold text-foreground text-sm sm:text-base flex items-center gap-2">
+                                      {subItem.title}
+                                      {isGraded && (
+                                        <span className="bg-primary/10 text-primary text-xs font-extrabold px-2 py-0.5 rounded-full">
+                                          Đã chấm: {currentScore}%
+                                        </span>
+                                      )}
+                                    </h4>
+                                    <p className="text-xs text-muted-foreground font-medium">
+                                      BGK đang hỏi: <span className="text-foreground italic">"{subItem.question}"</span>
+                                    </p>
+                                  </div>
+                                  <div className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-secondary transition-colors">
+                                    <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                                  </div>
+                                </div>
+
+                                {/* Expanded Content: Level Stepper / Cards */}
+                                {isExpanded && (
+                                  <div className="mt-6 space-y-4 animate-fadeIn">
+                                    <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                                      {subItem.levels.map((lvl, index) => {
+                                        const lvlScore = parseInt(lvl.pts);
+                                        const isSelected = currentScore === lvlScore;
+
+                                        // Determine highlight color based on level score and selection
+                                        const getBgColor = () => {
+                                          if (isSelected) {
+                                            if (lvl.pts === '100%') return 'border-emerald-500 bg-emerald-500/10 ring-2 ring-emerald-500/30';
+                                            if (lvl.pts === '75%') return 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/30';
+                                            if (lvl.pts === '50%') return 'border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/30';
+                                            if (lvl.pts === '25%') return 'border-orange-500 bg-orange-500/10 ring-2 ring-orange-500/30';
+                                            return 'border-rose-500 bg-rose-500/10 ring-2 ring-rose-500/30';
+                                          }
+                                          return 'border-border hover:border-primary/40 bg-card hover:bg-secondary/10';
+                                        };
+
+                                        const getBadgeColor = () => {
+                                          if (lvl.pts === '100%') return 'bg-emerald-500 text-white';
+                                          if (lvl.pts === '75%') return 'bg-blue-500 text-white';
+                                          if (lvl.pts === '50%') return 'bg-amber-500 text-white';
+                                          if (lvl.pts === '25%') return 'bg-orange-500 text-white';
+                                          return 'bg-rose-500 text-white';
+                                        };
+
+                                        return (
+                                          <div 
+                                            key={index} 
+                                            onClick={() => handleSelectScore(subItem.id, lvlScore)}
+                                            className={`border rounded-lg p-4 flex flex-col justify-between cursor-pointer transition-all duration-200 select-none ${getBgColor()}`}
+                                          >
+                                            <div>
+                                              <div className="flex items-center justify-between mb-2">
+                                                <span className="text-[10px] font-bold tracking-wider uppercase opacity-85 text-foreground">{lvl.level}</span>
+                                                <div className="flex items-center gap-1">
+                                                  {isSelected && (
+                                                    <span className="text-[10px] font-bold text-primary mr-0.5">✓</span>
+                                                  )}
+                                                  <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${getBadgeColor()}`}>
+                                                    {lvl.pts}
+                                                  </span>
+                                                </div>
+                                              </div>
+                                              <p className="text-xs text-foreground/90 font-medium leading-relaxed">
+                                                {lvl.desc}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
       </main>
 
