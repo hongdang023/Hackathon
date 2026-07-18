@@ -12,6 +12,7 @@ graph TD
     Home --> MentorsPlaybookList["🤝 Mentors Playbooks (/mentors)"]
     Home --> TimelinePage["📅 Timeline (/timeline)"]
     Home --> CopilotPage["🧠 AI Copilot (/copilot)"]
+    Home --> VideoRubricsPage["📹 Demo Video Rubrics (/demo-video-rubrics)"]
 
     JudgesPlaybookList --> JudgeDetail["🔍 Chi tiết Judge (/judges/:id)"]
     JudgesPlaybookList --> JudgeAdd["➕ Thêm mới Judge (/judges/new)"]
@@ -67,3 +68,15 @@ graph TD
   - **Rubric Gap Analyzer:** Nhập/Đánh giá điểm tự đánh giá (self-assessment) của team cho 6 tiêu chí Rubric để xác định tiêu chí yếu nhất.
   - **Mentor Matcher:** Đề xuất tự động mentor phù hợp nhất trong danh sách Playbook dựa trên kỹ năng của họ giúp giải quyết tiêu chí yếu nhất.
   - **Judge Simulator:** Mô phỏng phản biện của các giám khảo đã nhập, đưa ra các câu hỏi khó và khuyến nghị hành động tương ứng để bảo vệ giải pháp.
+
+### 6. 📹 Demo Video Rubrics
+
+- **Đường dẫn:** `/demo-video-rubrics`
+- **Chức năng:**
+  - Hiển thị thang điểm và mô tả chi tiết từ LEVEL 0 đến LEVEL 4 cho 5 danh mục đánh giá Video Demo & Trải nghiệm người dùng:
+    1. **B1. Product Demonstration** (End-user Journey, Product Functionality, AI Capability, Evidence & Trust)
+    2. **B2. Storytelling & Communication** (Story Structure, Message Clarity, Voice-over & Delivery)
+    3. **B3. Visual Production** (Screen Recording, Editing & Pacing, Motion Graphics, Brand Consistency)
+    4. **B4. Audio Production** (Voice Recording, Background Music, Audio Mixing)
+    5. **B5. Accessibility & Professionalism** (Subtitle & Readability, Overall Professionalism)
+  - Giúp team tự đánh giá và nâng cấp chất lượng video demo trước khi nộp bài.

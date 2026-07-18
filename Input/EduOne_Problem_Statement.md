@@ -17,9 +17,7 @@
 ## PHẦN B — TRACK THAM GIA / CHALLENGE TRACK
 
 - **Track đề xuất:** 🎓 Giáo Dục & Đào Tạo — phù hợp với phạm vi nền tảng EduOne.
-- Cần Phương xác nhận việc gán track này khớp với danh sách track chính thức (hiện có discrepancy 6 vs. 7 vs. 8 track giữa các tài liệu).
 
-> ⚠️ **Track chính thức cần đối chiếu với Handbook trước khi xác nhận.**
 
 ---
 

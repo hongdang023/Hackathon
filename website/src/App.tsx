@@ -25,7 +25,8 @@ import {
   Grid,
   List,
   ChevronDown,
-  CheckCircle2
+  CheckCircle2,
+  Video
 } from 'lucide-react';
 import { Playbook, ChecklistItem } from './types';
 import { initialPlaybooks } from './mockData';
@@ -137,9 +138,253 @@ const starDescriptions: Record<string, { level: string; name: string; desc: stri
   ]
 };
 
+interface DemoVideoRubricSubItem {
+  id: string;
+  title: string;
+  question: string;
+  levels: { level: string; pts: string; desc: string }[];
+}
+
+interface DemoVideoRubricCategory {
+  id: string;
+  title: string;
+  desc: string;
+  items: DemoVideoRubricSubItem[];
+}
+
+const demoVideoRubricsData: DemoVideoRubricCategory[] = [
+  {
+    id: 'b1',
+    title: 'B1. Product Demonstration',
+    desc: 'Đây là phần quan trọng nhất, chứng minh sản phẩm hoạt động thực tế và vai trò của AI.',
+    items: [
+      {
+        id: 'b1_1',
+        title: 'B1.1 End-user Journey',
+        question: 'Đây có đúng là trải nghiệm của người dùng cuối không?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không có demo hoặc chỉ trình chiếu slide.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Chỉ mở giao diện hoặc giới thiệu tính năng rời rạc, không có user journey.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Có một luồng sử dụng nhưng còn đứt đoạn hoặc phải giải thích nhiều mới hiểu.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Demo theo một hành trình người dùng hoàn chỉnh, từ bắt đầu đến kết quả cuối cùng.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Người xem hoàn toàn nhập vai người dùng cuối và hiểu rõ giá trị sản phẩm mà không cần giải thích thêm.' }
+        ]
+      },
+      {
+        id: 'b1_2',
+        title: 'B1.2 Product Functionality',
+        question: 'Đây là sản phẩm thật hay chỉ là mockup?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không có sản phẩm hoạt động.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Chủ yếu là hình ảnh, Figma hoặc slide minh họa.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Một số chức năng hoạt động nhưng còn nhiều phần giả lập.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Toàn bộ workflow chính hoạt động ổn định và được demo trực tiếp.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Demo mượt như sản phẩm thực tế, phản hồi tự nhiên, không có cảm giác dàn dựng.' }
+        ]
+      },
+      {
+        id: 'b1_3',
+        title: 'B1.3 AI Capability',
+        question: 'AI thực sự làm gì?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không thể hiện AI.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'AI chỉ trả lời prompt hoặc chatbot đơn giản.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'AI hỗ trợ một phần công việc.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'AI chủ động phân tích, suy luận hoặc đưa ra quyết định trong workflow.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'AI là trung tâm của sản phẩm, tự vận hành quy trình cốt lõi và tạo giá trị rõ ràng cho người dùng.' }
+        ]
+      },
+      {
+        id: 'b1_4',
+        title: 'B1.4 Evidence & Trust',
+        question: 'Tôi có tin những gì video vừa nói không?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Chỉ nêu claim, không có bằng chứng.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Có minh họa nhưng không chứng minh được claim.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Một số claim được chứng minh.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Hầu hết các claim đều được chứng minh bằng hành vi của hệ thống hoặc dữ liệu thực tế.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Mỗi claim đều đi kèm evidence trực tiếp, tạo cảm giác đáng tin cậy và minh bạch.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'b2',
+    title: 'B2. Storytelling & Communication',
+    desc: 'Cách dẫn dắt, kể chuyện và truyền đạt thông điệp cốt lõi của sản phẩm.',
+    items: [
+      {
+        id: 'b2_1',
+        title: 'B2.1 Story Structure',
+        question: 'Video có kể một câu chuyện hay chỉ liệt kê tính năng?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không có cấu trúc.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Liệt kê tính năng.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Có mở đầu và kết thúc nhưng còn rời rạc.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Storyline rõ ràng: Problem → User → AI → Result → Value.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Story hấp dẫn, mọi scene đều có mục đích và dẫn dắt cảm xúc tự nhiên.' }
+        ]
+      },
+      {
+        id: 'b2_2',
+        title: 'B2.2 Message Clarity',
+        question: 'Tôi nhớ điều gì sau khi xem xong?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không rõ sản phẩm giải quyết vấn đề gì.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Có nhiều thông điệp nhưng thiếu trọng tâm.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Có thông điệp chính nhưng chưa xuyên suốt.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Một thông điệp trung tâm được lặp lại xuyên suốt video.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Người xem nhớ ngay giá trị cốt lõi của sản phẩm sau khi video kết thúc.' }
+        ]
+      },
+      {
+        id: 'b2_3',
+        title: 'B2.3 Voice-over & Delivery',
+        question: 'Người thuyết minh có giúp tôi hiểu sản phẩm không?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không có voice hoặc rất khó nghe.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Đọc đều, thiếu nhấn nhá hoặc phát âm khó nghe.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Giọng rõ nhưng pacing chưa tốt.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Giọng tự nhiên, nhấn đúng ý, tốc độ phù hợp với hình ảnh.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Voice-over chuyên nghiệp, tăng cảm xúc và giúp người xem hiểu nhanh hơn.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'b3',
+    title: 'B3. Visual Production',
+    desc: 'Chất lượng hình ảnh, quay màn hình, dựng phim và nhận diện thương hiệu.',
+    items: [
+      {
+        id: 'b3_1',
+        title: 'B3.1 Screen Recording Quality',
+        question: 'Hình ảnh quay màn hình có sắc nét và dễ theo dõi không?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Mờ, lag hoặc khó quan sát.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Hình ảnh chấp nhận được nhưng thiếu ổn định.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Đủ rõ để theo dõi.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Rõ nét, thao tác mượt, zoom và highlight hợp lý.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Chất lượng chuyên nghiệp, người xem luôn biết cần nhìn vào đâu.' }
+        ]
+      },
+      {
+        id: 'b3_2',
+        title: 'B3.2 Editing & Pacing',
+        question: 'Nhịp độ dựng hình có giữ chân người xem không?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Dựng rời rạc, khó theo dõi.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Chuyển cảnh thô, nhiều thời gian chết.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Dựng cơ bản, pacing chưa ổn định.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Chuyển cảnh mượt, nhịp độ hợp lý, không dư hoặc thiếu thời lượng.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Editing dẫn dắt cảm xúc, pacing giữ được sự tập trung trong toàn bộ video.' }
+        ]
+      },
+      {
+        id: 'b3_3',
+        title: 'B3.3 Motion Graphics & Visual Guidance',
+        question: 'Hiệu ứng chuyển động và chỉ dẫn trực quan có hiệu quả?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không có hướng dẫn trực quan.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Chỉ dùng hiệu ứng trang trí.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Có highlight nhưng chưa nhất quán.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Motion và callout giúp giải thích các khái niệm hoặc hành động quan trọng.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Motion graphics trở thành một phần của việc truyền tải thông tin, giúp hiểu nhanh hơn mà không gây phân tán.' }
+        ]
+      },
+      {
+        id: 'b3_4',
+        title: 'B3.4 Brand Consistency',
+        question: 'Nhận diện thương hiệu có đồng bộ?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không có nhận diện thương hiệu.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Logo hoặc màu sắc xuất hiện rời rạc.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Có sử dụng guideline nhưng chưa nhất quán.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Font, màu, icon, layout và animation đồng bộ theo Brand Guideline.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Video có nhận diện thương hiệu mạnh và chuyên nghiệp ngay từ những giây đầu tiên.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'b4',
+    title: 'B4. Audio Production',
+    desc: 'Chất lượng giọng nói, nhạc nền và xử lý âm thanh tổng thể.',
+    items: [
+      {
+        id: 'b4_1',
+        title: 'B4.1 Voice Recording Quality',
+        question: 'Giọng nói thu âm có sạch và dễ nghe không?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Rè, méo tiếng hoặc khó nghe.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Có nhiều tạp âm hoặc âm lượng không ổn định.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Âm thanh rõ nhưng còn hạn chế về chất lượng.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Giọng nói sạch, rõ, ổn định và dễ nghe.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Chất lượng thu âm chuyên nghiệp, mang lại trải nghiệm nghe thoải mái.' }
+        ]
+      },
+      {
+        id: 'b4_2',
+        title: 'B4.2 Background Music & Sound Design',
+        question: 'Âm thanh nền và hiệu ứng tiếng động có phù hợp?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không có hoặc gây khó chịu.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Có nhạc nhưng không phù hợp hoặc lấn voice.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Nhạc phù hợp nhưng ít hỗ trợ cảm xúc.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Nhạc nền, SFX và chuyển cảnh hỗ trợ tốt cho trải nghiệm xem.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Sound design được đầu tư, tăng cảm xúc và làm nổi bật các khoảnh khắc quan trọng mà không gây phân tán.' }
+        ]
+      },
+      {
+        id: 'b4_3',
+        title: 'B4.3 Audio Mixing',
+        question: 'Độ cân bằng giữa giọng nói và nhạc nền ra sao?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Âm lượng lộn xộn, khó nghe.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Voice và nhạc thường xuyên chồng lấn.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Âm lượng tương đối cân bằng.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Voice luôn rõ, nhạc và hiệu ứng được cân chỉnh hợp lý.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Mixing chuyên nghiệp, tạo trải nghiệm nghe tự nhiên trên nhiều thiết bị.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'b5',
+    title: 'B5. Accessibility & Professionalism',
+    desc: 'Độ dễ tiếp cận (phụ đề, tính đọc) và độ hoàn thiện chuyên nghiệp tổng thể.',
+    items: [
+      {
+        id: 'b5_1',
+        title: 'B5.1 Subtitle & Readability',
+        question: 'Phụ đề có đồng bộ và dễ đọc?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Không có subtitle hoặc rất khó đọc.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Subtitle thiếu đồng bộ hoặc che nội dung.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Subtitle đầy đủ nhưng trình bày chưa tối ưu.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Subtitle rõ ràng, đúng thời điểm, hỗ trợ người xem theo dõi.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Subtitle, typography và bố cục giúp người xem tiếp nhận thông tin nhanh và dễ dàng.' }
+        ]
+      },
+      {
+        id: 'b5_2',
+        title: 'B5.2 Overall Professionalism',
+        question: 'Mức độ chỉn chu toàn diện của video thuyết phục?',
+        levels: [
+          { level: 'LEVEL 0', pts: '0%', desc: 'Video tạo cảm giác làm vội hoặc thiếu hoàn thiện.' },
+          { level: 'LEVEL 1', pts: '25%', desc: 'Chấp nhận được nhưng còn nhiều lỗi nhỏ.' },
+          { level: 'LEVEL 2', pts: '50%', desc: 'Chỉn chu ở mức demo hackathon.' },
+          { level: 'LEVEL 3', pts: '75%', desc: 'Hoàn thiện tốt, thể hiện sự đầu tư và nghiêm túc của đội.' },
+          { level: 'LEVEL 4', pts: '100%', desc: 'Chất lượng tương đương video giới thiệu sản phẩm của một startup hoặc doanh nghiệp chuyên nghiệp.' }
+        ]
+      }
+    ]
+  }
+];
+
 export default function App() {
   // Navigation State
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'judges' | 'mentors' | 'timeline' | 'copilot' | 'rubrics'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'judges' | 'mentors' | 'timeline' | 'copilot' | 'rubrics' | 'demo-video-rubrics'>('dashboard');
   const [currentPlaybookId, setCurrentPlaybookId] = useState<string | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -147,6 +392,7 @@ export default function App() {
   const [viewMode, setViewMode] = useState<'detailed' | 'compact'>('detailed');
   const [openRubric, setOpenRubric] = useState<number | null>(null);
   const [expandedRubricStarId, setExpandedRubricStarId] = useState<string | null>(null);
+  const [expandedVideoRubricId, setExpandedVideoRubricId] = useState<string | null>(null);
 
   // Playbooks State (Merged with new initial playbooks to support updates)
   const [playbooks, setPlaybooks] = useState<Playbook[]>(() => {
@@ -565,6 +811,12 @@ export default function App() {
               className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${activeTab === 'rubrics' ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Rubrics
+            </button>
+            <button 
+              onClick={() => { setActiveTab('demo-video-rubrics'); setCurrentPlaybookId(null); setIsAddingNew(false); setIsEditing(false); }}
+              className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${activeTab === 'demo-video-rubrics' ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Video Rubrics
             </button>
           </nav>
 
@@ -2044,6 +2296,113 @@ export default function App() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* 6. Demo Video Rubrics View */}
+        {activeTab === 'demo-video-rubrics' && !currentPlaybookId && !isAddingNew && (
+          <div className="space-y-8 animate-fadeIn">
+            {/* Header Banner */}
+            <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-40 h-40 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/20 p-3 rounded-lg text-primary">
+                  <Video className="w-8 h-8" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground">B. Demo Video & User Experience Rubrics</h2>
+                  <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+                    <strong>Mục tiêu:</strong> Thể hiện một sản phẩm <strong>thực sự hoạt động dưới góc nhìn của người dùng cuối</strong>, truyền tải rõ giá trị AI và tạo trải nghiệm xem chuyên nghiệp.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Rubrics Grid */}
+            <div className="space-y-6">
+              {demoVideoRubricsData.map((category) => (
+                <div key={category.id} className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                  {/* Category Header */}
+                  <div className="bg-secondary/40 px-6 py-4 border-b border-border">
+                    <h3 className="text-lg font-bold text-foreground">{category.title}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">{category.desc}</p>
+                  </div>
+
+                  {/* Subcategories List */}
+                  <div className="divide-y divide-border">
+                    {category.items.map((subItem) => {
+                      const isExpanded = expandedVideoRubricId === subItem.id;
+                      return (
+                        <div key={subItem.id} className="p-6 transition-colors hover:bg-secondary/10">
+                          {/* Subcategory Header */}
+                          <div 
+                            className="flex items-center justify-between cursor-pointer"
+                            onClick={() => setExpandedVideoRubricId(isExpanded ? null : subItem.id)}
+                          >
+                            <div className="space-y-1">
+                              <h4 className="font-bold text-foreground text-sm sm:text-base flex items-center gap-2">
+                                {subItem.title}
+                              </h4>
+                              <p className="text-xs text-muted-foreground font-medium">
+                                BGK đang hỏi: <span className="text-foreground italic">"{subItem.question}"</span>
+                              </p>
+                            </div>
+                            <div className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-secondary transition-colors">
+                              <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                            </div>
+                          </div>
+
+                          {/* Expanded Content: Level Stepper / Cards */}
+                          {isExpanded && (
+                            <div className="mt-6 space-y-4 animate-fadeIn">
+                              <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                                {subItem.levels.map((lvl, index) => {
+                                  // Determine highlight color based on level score
+                                  const getBgColor = (pts: string) => {
+                                    if (pts === '100%') return 'border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10';
+                                    if (pts === '75%') return 'border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10';
+                                    if (pts === '50%') return 'border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10';
+                                    if (pts === '25%') return 'border-orange-500/30 bg-orange-500/5 hover:bg-orange-500/10';
+                                    return 'border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/10';
+                                  };
+
+                                  const getBadgeColor = (pts: string) => {
+                                    if (pts === '100%') return 'bg-emerald-500 text-white';
+                                    if (pts === '75%') return 'bg-blue-500 text-white';
+                                    if (pts === '50%') return 'bg-amber-500 text-white';
+                                    if (pts === '25%') return 'bg-orange-500 text-white';
+                                    return 'bg-rose-500 text-white';
+                                  };
+
+                                  return (
+                                    <div 
+                                      key={index} 
+                                      className={`border rounded-lg p-4 flex flex-col justify-between transition-all duration-200 ${getBgColor(lvl.pts)}`}
+                                    >
+                                      <div>
+                                        <div className="flex items-center justify-between mb-2">
+                                          <span className="text-[10px] font-bold tracking-wider uppercase opacity-80 text-foreground">{lvl.level}</span>
+                                          <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${getBadgeColor(lvl.pts)}`}>
+                                            {lvl.pts}
+                                          </span>
+                                        </div>
+                                        <p className="text-xs text-foreground/90 font-medium leading-relaxed">
+                                          {lvl.desc}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
